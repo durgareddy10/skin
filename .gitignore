@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environments
+venv/
+venv311/
+.env
+.venv/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Node
+frontend/node_modules/
+frontend/dist/
+
+# Vite
+.vite/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# VS Code
+.vscode/
+
+# Python cache
+.pytest_cache/
+
+# Temporary files
+*.tmp
+*.temp
+
+# Application database
+backend/dermascan.db
