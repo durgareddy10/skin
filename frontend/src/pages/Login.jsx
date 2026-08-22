@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const API_URL = "http://localhost:5000";
+// Use the deployed Render backend in production.
+// For local development, VITE_API_URL can point to localhost.
+const API_URL =
+  import.meta.env.VITE_API_URL ||
+  "http://localhost:5000";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -26,11 +30,9 @@ export default function Login() {
 
     try {
       console.log("LOGIN STARTED");
+      console.log("API URL:", API_URL);
       console.log("Email:", email);
 
-      /*
-       * Try Flask login endpoint.
-       */
       const response = await fetch(
         `${API_URL}/api/login`,
         {
@@ -68,7 +70,7 @@ export default function Login() {
       }
 
       /*
-       * Create ONE standard user object.
+       * Create one standard user object.
        */
       const user = {
         id:
@@ -80,9 +82,7 @@ export default function Login() {
           data.user?.name ||
           data.name ||
           data.user?.fullName ||
-          email
-            .split("@")[0]
-            .trim(),
+          email.split("@")[0].trim(),
 
         email:
           data.user?.email ||
@@ -93,10 +93,7 @@ export default function Login() {
       console.log("LOGGED-IN USER:", user);
 
       /*
-       * IMPORTANT
-       *
-       * Save the SAME user under all keys
-       * used by the existing frontend.
+       * Save the same user under all existing keys.
        */
       localStorage.setItem(
         "currentUser",
@@ -124,7 +121,7 @@ export default function Login() {
       );
 
       /*
-       * Simple login flag.
+       * Login flags.
        */
       localStorage.setItem(
         "isLoggedIn",
@@ -137,7 +134,7 @@ export default function Login() {
       );
 
       /*
-       * Save token if backend gives one.
+       * Save token if backend provides one.
        */
       if (data.token) {
         localStorage.setItem(
@@ -147,7 +144,7 @@ export default function Login() {
       }
 
       /*
-       * Tell other components that login changed.
+       * Notify other components.
        */
       window.dispatchEvent(
         new Event("auth-change")
@@ -170,7 +167,7 @@ export default function Login() {
 
       setError(
         err.message ||
-          "Login failed."
+          "Login failed. Please try again."
       );
 
     } finally {
@@ -274,6 +271,7 @@ export default function Login() {
               setEmail(e.target.value)
             }
             placeholder="Enter your email"
+            autoComplete="email"
             style={{
               width: "100%",
               padding: "18px",
@@ -306,6 +304,7 @@ export default function Login() {
               setPassword(e.target.value)
             }
             placeholder="Enter your password"
+            autoComplete="current-password"
             style={{
               width: "100%",
               padding: "18px",
