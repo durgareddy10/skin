@@ -208,12 +208,12 @@ export default function Home() {
               boxShadow: "0 4px 16px rgba(41, 37, 31, 0.03)",
             }}
           >
-            <div style={{ fontSize: "28px", marginBottom: "12px" }}>🔒</div>
+            <div style={{ fontSize: "28px", marginBottom: "12px" }}>🩺</div>
             <h3 style={{ margin: "0 0 6px", fontSize: "17px", color: C.dark }}>
-              Secure Cloud History
+              Clinical Care & Precautions
             </h3>
             <p style={{ margin: 0, fontSize: "13.5px", color: C.brown, lineHeight: "1.6" }}>
-              Powered by Supabase for private, encrypted storage of your scan history and condition tracking.
+              Comprehensive care instructions, trigger warnings, and symptom thresholds for consulting a dermatologist.
             </p>
           </div>
         </div>

@@ -308,40 +308,21 @@ export default function Navbar() {
 
         {/* MOBILE HEADER CONTROLS (Only Visible on Mobile) */}
         {isMobile && (
-          <div className="mobile-nav-controls">
-            {/* Direct Scan Pill for 1-tap scanning */}
-            <Link
-              to="/check-skin"
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "5px",
-                padding: "7px 12px",
-                borderRadius: "20px",
-                background: location.pathname === "/check-skin" ? C.terracotta : C.dark,
-                color: "#fff",
-                textDecoration: "none",
-                fontSize: "12px",
-                fontWeight: "700",
-              }}
-            >
-              <span>📷</span> Scan
-            </Link>
-
+          <div className="mobile-nav-controls" style={{ display: "flex", alignItems: "center" }}>
             {/* HAMBURGER TOGGLE BUTTON */}
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label="Toggle Navigation Menu"
               style={{
-                width: "42px",
-                height: "42px",
+                width: "44px",
+                height: "44px",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 background: mobileMenuOpen ? "#ebd8cb" : "#eee5d9",
                 border: `1px solid ${C.border}`,
-                borderRadius: "10px",
+                borderRadius: "11px",
                 color: C.dark,
                 fontSize: "20px",
                 cursor: "pointer",

@@ -95,7 +95,8 @@ function saveHistory(result, user) {
 
 export default function CheckSkin() {
   const navigate = useNavigate();
-  const fileInputRef = useRef(null);
+  const galleryInputRef = useRef(null);
+  const cameraInputRef = useRef(null);
 
   const [selectedFile, setSelectedFile] = useState(null);
   const [preview, setPreview] = useState("");
@@ -195,19 +196,27 @@ export default function CheckSkin() {
     reader.readAsDataURL(file);
   };
 
-  const openFileSelector = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
+  const openGallery = (e) => {
+    e?.stopPropagation?.();
+    galleryInputRef.current?.click();
   };
 
-  const handleRemoveImage = () => {
+  const openCamera = (e) => {
+    e?.stopPropagation?.();
+    cameraInputRef.current?.click();
+  };
+
+  const handleRemoveImage = (e) => {
+    e?.stopPropagation?.();
     setSelectedFile(null);
     setPreview("");
     setError("");
     setSuccess("");
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
+    if (galleryInputRef.current) {
+      galleryInputRef.current.value = "";
+    }
+    if (cameraInputRef.current) {
+      cameraInputRef.current.value = "";
     }
   };
 
@@ -437,23 +446,47 @@ export default function CheckSkin() {
               <h2 style={styles.cardHeading}>Select Skin Image</h2>
             </div>
 
+            {/* Gallery input: without capture, allows selecting from photos/gallery/files */}
             <input
-              ref={fileInputRef}
+              ref={galleryInputRef}
               type="file"
               accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp"
+              onChange={handleFileChange}
+              style={{ display: "none" }}
+            />
+
+            {/* Live camera input: opens rear camera directly */}
+            <input
+              ref={cameraInputRef}
+              type="file"
+              accept="image/*"
               capture="environment"
               onChange={handleFileChange}
               style={{ display: "none" }}
             />
 
             {!preview ? (
-              <div onClick={openFileSelector} style={styles.dropZone}>
-                <div style={styles.uploadIconCircle}>📸</div>
-                <div style={styles.uploadActionText}>Tap to Take Photo or Upload</div>
-                <div style={styles.uploadFormatText}>Supports JPG, PNG, WEBP (max 10MB)</div>
-                <button type="button" style={styles.uploadButtonVisual}>
-                  Choose Photo / Camera
-                </button>
+              <div style={styles.dropZone} onClick={openGallery}>
+                <div style={styles.uploadIconCircle}>🩺</div>
+                <div style={styles.uploadActionText}>Select Skin Photo</div>
+                <div style={styles.uploadFormatText}>Choose from your phone's gallery or take a new photo</div>
+                
+                <div style={styles.uploadButtonsRow}>
+                  <button
+                    type="button"
+                    onClick={openGallery}
+                    style={styles.galleryButton}
+                  >
+                    📁 Choose from Gallery / Files
+                  </button>
+                  <button
+                    type="button"
+                    onClick={openCamera}
+                    style={styles.cameraButton}
+                  >
+                    📸 Take Photo with Camera
+                  </button>
+                </div>
               </div>
             ) : (
               <div style={styles.previewContainer}>
@@ -465,10 +498,17 @@ export default function CheckSkin() {
                   <div style={styles.previewActions}>
                     <button
                       type="button"
-                      onClick={openFileSelector}
+                      onClick={openGallery}
                       style={styles.changePhotoButton}
                     >
-                      🔄 Change Photo
+                      📁 Gallery
+                    </button>
+                    <button
+                      type="button"
+                      onClick={openCamera}
+                      style={styles.changePhotoButton}
+                    >
+                      📸 Retake
                     </button>
                     <button
                       type="button"
@@ -727,6 +767,42 @@ const styles = {
     fontSize: "12.5px",
     color: "#756c61",
     marginBottom: "16px",
+  },
+  uploadButtonsRow: {
+    display: "flex",
+    gap: "10px",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    width: "100%",
+    marginTop: "8px",
+  },
+  galleryButton: {
+    background: "#29251f",
+    color: "#ffffff",
+    border: "none",
+    padding: "12px 18px",
+    borderRadius: "11px",
+    fontSize: "13.5px",
+    fontWeight: "700",
+    cursor: "pointer",
+    boxShadow: "0 2px 8px rgba(41, 37, 31, 0.2)",
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "6px",
+  },
+  cameraButton: {
+    background: "#b95731",
+    color: "#ffffff",
+    border: "none",
+    padding: "12px 18px",
+    borderRadius: "11px",
+    fontSize: "13.5px",
+    fontWeight: "700",
+    cursor: "pointer",
+    boxShadow: "0 2px 8px rgba(185, 87, 49, 0.25)",
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "6px",
   },
   uploadButtonVisual: {
     background: "#29251f",
