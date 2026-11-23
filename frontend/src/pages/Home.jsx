@@ -1,3 +1,4 @@
+import React from "react";
 import { Link } from "react-router-dom";
 
 const C = {
@@ -9,56 +10,44 @@ const C = {
   border: "#ded5c9",
 };
 
-function Home() {
+export default function Home() {
   return (
     <div
       style={{
         minHeight: "calc(100vh - 74px)",
         background: C.bg,
         color: C.dark,
-        fontFamily: "Arial, Helvetica, sans-serif",
-
+        fontFamily: "Georgia, 'Times New Roman', serif",
         display: "flex",
+        flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-
-        padding: "60px 30px",
+        padding: "60px 20px 80px",
+        boxSizing: "border-box",
       }}
     >
-
-      {/* MAIN HOME CONTENT */}
-
       <section
         style={{
           width: "100%",
-          maxWidth: "900px",
+          maxWidth: "880px",
           textAlign: "center",
         }}
       >
-
-        {/* LABEL */}
-
+        {/* EYEBROW BADGE */}
         <div
           style={{
             display: "inline-flex",
             alignItems: "center",
             gap: "8px",
-
-            padding: "9px 15px",
-
+            padding: "8px 16px",
             borderRadius: "30px",
-
             background: C.light,
-
             border: `1px solid ${C.border}`,
-
             color: C.terracotta,
-
-            fontSize: "9px",
-
+            fontSize: "11px",
             fontWeight: "700",
-
-            letterSpacing: "1.2px",
+            letterSpacing: "2px",
+            marginBottom: "24px",
           }}
         >
           <span
@@ -69,213 +58,166 @@ function Home() {
               background: C.terracotta,
             }}
           />
-
-          AI-POWERED SKIN ANALYSIS
+          AI-POWERED DERMATOLOGICAL ANALYSIS
         </div>
 
-
-        {/* HEADING */}
-
+        {/* HEADINGS */}
         <h1
           style={{
-            marginTop: "28px",
-
-            marginBottom: "0",
-
-            fontFamily:
-              "Georgia, 'Times New Roman', serif",
-
-            fontSize:
-              "clamp(55px, 8vw, 92px)",
-
-            lineHeight: "1.02",
-
-            letterSpacing: "-3px",
-
+            margin: "0",
+            fontSize: "clamp(36px, 6vw, 68px)",
+            lineHeight: "1.08",
+            letterSpacing: "-1.5px",
             fontWeight: "700",
-
             color: C.dark,
           }}
         >
           Understand your skin.
         </h1>
 
-
         <h2
           style={{
-            marginTop: "8px",
-
-            fontFamily:
-              "Georgia, 'Times New Roman', serif",
-
-            fontSize:
-              "clamp(45px, 6vw, 70px)",
-
-            lineHeight: "1.05",
-
-            letterSpacing: "-2px",
-
+            margin: "8px 0 0",
+            fontSize: "clamp(28px, 4.5vw, 52px)",
+            lineHeight: "1.1",
+            letterSpacing: "-1px",
             fontWeight: "700",
-
             color: C.terracotta,
           }}
         >
-          Powered by AI.
+          Powered by Deep Learning.
         </h2>
 
-
         {/* DESCRIPTION */}
-
         <p
           style={{
-            maxWidth: "620px",
-
-            margin:
-              "28px auto 0",
-
+            maxWidth: "640px",
+            margin: "24px auto 0",
             color: C.brown,
-
-            fontSize: "15px",
-
-            lineHeight: "1.8",
+            fontSize: "16px",
+            lineHeight: "1.7",
           }}
         >
-          Upload a skin image and get an
-          AI-assisted prediction of possible
-          skin conditions using deep learning.
+          Upload a clear image to get an instant AI-assisted classification of possible skin conditions, complete with doctor-approved precautions and dietary nutrition guides.
         </p>
 
-
-        {/* BUTTONS */}
-
+        {/* PRIMARY ACTIONS */}
         <div
           style={{
             display: "flex",
-
             justifyContent: "center",
-
             alignItems: "center",
-
-            gap: "12px",
-
+            gap: "14px",
             marginTop: "32px",
+            flexWrap: "wrap",
           }}
         >
-
           <Link
             to="/check-skin"
-
             style={{
               display: "inline-flex",
-
               alignItems: "center",
-
               justifyContent: "center",
-
-              padding: "15px 23px",
-
-              borderRadius: "9px",
-
-              background: C.dark,
-
+              padding: "16px 28px",
+              borderRadius: "12px",
+              background: C.terracotta,
               color: "#ffffff",
-
               textDecoration: "none",
-
-              fontSize: "12px",
-
+              fontSize: "15px",
               fontWeight: "700",
-
+              boxShadow: "0 4px 14px rgba(185, 87, 49, 0.25)",
               transition: "0.2s",
             }}
           >
             Analyze My Skin →
           </Link>
 
-
           <Link
-            to="/about"
-
+            to="/diseases"
             style={{
               display: "inline-flex",
-
               alignItems: "center",
-
               justifyContent: "center",
-
-              padding: "14px 23px",
-
-              borderRadius: "9px",
-
-              border:
-                `1px solid ${C.border}`,
-
-              background:
-                "transparent",
-
-              color: C.brown,
-
+              padding: "15px 24px",
+              borderRadius: "12px",
+              border: `1px solid ${C.border}`,
+              background: "#fffdfa",
+              color: C.dark,
               textDecoration: "none",
-
-              fontSize: "12px",
-
-              fontWeight: "600",
+              fontSize: "15px",
+              fontWeight: "700",
+              transition: "0.2s",
             }}
           >
-            Learn More
+            🥗 Browse Diseases & Diets
           </Link>
-
         </div>
 
-
-        {/* SMALL INFORMATION */}
-
+        {/* 3-PILLAR HIGHLIGHT CARDS */}
         <div
           style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+            gap: "18px",
             marginTop: "55px",
-
-            display: "flex",
-
-            justifyContent: "center",
-
-            gap: "35px",
-
-            color: "#91877b",
-
-            fontSize: "9px",
-
-            fontWeight: "700",
-
-            letterSpacing: "1px",
+            textAlign: "left",
           }}
         >
+          <div
+            style={{
+              background: "#fffdfa",
+              border: `1px solid ${C.border}`,
+              borderRadius: "16px",
+              padding: "24px",
+              boxShadow: "0 4px 16px rgba(41, 37, 31, 0.03)",
+            }}
+          >
+            <div style={{ fontSize: "28px", marginBottom: "12px" }}>⚡</div>
+            <h3 style={{ margin: "0 0 6px", fontSize: "17px", color: C.dark }}>
+              Instant AI Screening
+            </h3>
+            <p style={{ margin: 0, fontSize: "13.5px", color: C.brown, lineHeight: "1.6" }}>
+              Trained on clinical datasets to accurately distinguish six common and contagious dermatological conditions.
+            </p>
+          </div>
 
-          <span>
-            AI ANALYSIS
-          </span>
+          <div
+            style={{
+              background: "#fffdfa",
+              border: `1px solid ${C.border}`,
+              borderRadius: "16px",
+              padding: "24px",
+              boxShadow: "0 4px 16px rgba(41, 37, 31, 0.03)",
+            }}
+          >
+            <div style={{ fontSize: "28px", marginBottom: "12px" }}>🥗</div>
+            <h3 style={{ margin: "0 0 6px", fontSize: "17px", color: C.dark }}>
+              Diet & Trigger Guides
+            </h3>
+            <p style={{ margin: 0, fontSize: "13.5px", color: C.brown, lineHeight: "1.6" }}>
+              Tailored lists of anti-inflammatory foods that heal and specific dietary triggers you should avoid.
+            </p>
+          </div>
 
-          <span>
-            •
-          </span>
-
-          <span>
-            DEEP LEARNING
-          </span>
-
-          <span>
-            •
-          </span>
-
-          <span>
-            SKIN CLASSIFICATION
-          </span>
-
+          <div
+            style={{
+              background: "#fffdfa",
+              border: `1px solid ${C.border}`,
+              borderRadius: "16px",
+              padding: "24px",
+              boxShadow: "0 4px 16px rgba(41, 37, 31, 0.03)",
+            }}
+          >
+            <div style={{ fontSize: "28px", marginBottom: "12px" }}>🔒</div>
+            <h3 style={{ margin: "0 0 6px", fontSize: "17px", color: C.dark }}>
+              Secure Cloud History
+            </h3>
+            <p style={{ margin: 0, fontSize: "13.5px", color: C.brown, lineHeight: "1.6" }}>
+              Powered by Supabase for private, encrypted storage of your scan history and condition tracking.
+            </p>
+          </div>
         </div>
-
       </section>
-
     </div>
   );
 }
-
-export default Home;

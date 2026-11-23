@@ -46,7 +46,7 @@ function Contact() {
           "Arial, Helvetica, sans-serif",
 
         padding:
-          "75px 30px 90px",
+          "50px 20px 80px",
       }}
     >
 
@@ -62,7 +62,7 @@ function Contact() {
 
           textAlign: "center",
 
-          paddingBottom: "60px",
+          paddingBottom: "40px",
         }}
       >
 
@@ -101,11 +101,11 @@ function Contact() {
               "Georgia, 'Times New Roman', serif",
 
             fontSize:
-              "clamp(45px, 6vw, 68px)",
+              "clamp(28px, 5.5vw, 60px)",
 
-            lineHeight: "1.05",
+            lineHeight: "1.08",
 
-            letterSpacing: "-2px",
+            letterSpacing: "-1.5px",
 
             color: C.dark,
           }}

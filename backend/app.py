@@ -86,6 +86,17 @@ print("=" * 60)
 print("Loading DermaScan model...")
 print("=" * 60)
 
+# Compatibility: strip quantization_config if model was saved with Keras >=3.13
+import keras.src.saving.serialization_lib
+_orig_deserialize = keras.src.saving.serialization_lib.deserialize_keras_object
+
+def _patched_deserialize(config, *args, **kwargs):
+    if isinstance(config, dict) and "config" in config and isinstance(config["config"], dict):
+        config["config"].pop("quantization_config", None)
+    return _orig_deserialize(config, *args, **kwargs)
+
+keras.src.saving.serialization_lib.deserialize_keras_object = _patched_deserialize
+
 model = tf.keras.models.load_model(
     MODEL_PATH
 )
@@ -745,6 +756,9 @@ def login():
 # AUTHENTICATION HELPER
 # =========================================================
 
+SUPABASE_URL = os.environ.get("SUPABASE_URL", "https://cchbsyxscdtgketqgguv.supabase.co")
+SUPABASE_KEY = os.environ.get("SUPABASE_KEY", "")
+
 def get_current_user():
 
     authorization = request.headers.get(
@@ -752,13 +766,10 @@ def get_current_user():
         ""
     )
 
-
     if not authorization.startswith(
         "Bearer "
     ):
-
         return None
-
 
     token = authorization.replace(
         "Bearer ",
@@ -766,33 +777,63 @@ def get_current_user():
         1
     ).strip()
 
-
     if not token:
-
         return None
 
+    # 1. Fast local JWT payload decode (for Supabase session tokens)
+    try:
+        parts = token.split(".")
+        if len(parts) == 3:
+            import base64
+            payload_b64 = parts[1] + "=" * (-len(parts[1]) % 4)
+            payload = json.loads(base64.urlsafe_b64decode(payload_b64.encode("utf-8")).decode("utf-8"))
+            if payload and ("sub" in payload or "email" in payload):
+                return {
+                    "id": payload.get("sub", payload.get("id", "")),
+                    "email": payload.get("email", ""),
+                    "name": payload.get("user_metadata", {}).get("name", payload.get("email", "").split("@")[0]),
+                }
+    except Exception:
+        pass
 
-    connection = get_db()
+    # 2. Try Supabase Auth token verification via API
+    try:
+        import urllib.request
+        req = urllib.request.Request(
+            f"{SUPABASE_URL}/auth/v1/user",
+            headers={
+                "Authorization": f"Bearer {token}",
+                "apikey": SUPABASE_KEY,
+            }
+        )
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+            if data and "id" in data:
+                return {
+                    "id": data["id"],
+                    "email": data.get("email", ""),
+                    "name": data.get("user_metadata", {}).get("name", data.get("email", "").split("@")[0]),
+                }
+    except Exception as e:
+        pass
 
-    cursor = connection.cursor()
-
-
-    cursor.execute(
-        """
-        SELECT *
-        FROM users
-        WHERE token = ?
-        """,
-        (token,)
-    )
-
-
-    user = cursor.fetchone()
-
-    connection.close()
-
-
-    return user
+    # 2. Fallback to local SQLite verification if available
+    try:
+        connection = get_db()
+        cursor = connection.cursor()
+        cursor.execute(
+            """
+            SELECT *
+            FROM users
+            WHERE token = ?
+            """,
+            (token,)
+        )
+        user = cursor.fetchone()
+        connection.close()
+        return user
+    except Exception:
+        return None
 
 
 # =========================================================
@@ -813,17 +854,13 @@ def predict():
 
         user = get_current_user()
 
-
+        # If not authenticated, allow evaluation/demo scan as guest user
         if not user:
-
-            return jsonify({
-
-                "success": False,
-
-                "message":
-                    "Please login before analysing an image."
-
-            }), 401
+            user = {
+                "id": "guest_user",
+                "email": "guest@dermascan.local",
+                "name": "Guest User",
+            }
 
 
         # -------------------------------------------------
@@ -1157,47 +1194,49 @@ def predict():
 
 
         # -------------------------------------------------
-        # SAVE HISTORY
+        # SAVE HISTORY (optional local cache)
         # -------------------------------------------------
 
-        connection = get_db()
+        history_id = None
 
-        cursor = connection.cursor()
+        try:
+            connection = get_db()
+            cursor = connection.cursor()
+            user_db_id = user["id"] if isinstance(user["id"], int) else 1
 
+            cursor.execute(
+                """
+                INSERT INTO history
+                (
+                    user_id,
+                    filename,
+                    disease,
+                    confidence,
+                    probabilities
+                )
 
-        cursor.execute(
-            """
-            INSERT INTO history
-            (
-                user_id,
-                filename,
-                disease,
-                confidence,
-                probabilities
-            )
-
-            VALUES
-            (?, ?, ?, ?, ?)
-            """,
-            (
-                user["id"],
-                file.filename,
-                disease,
-                round(
-                    confidence * 100,
-                    2
-                ),
-                json.dumps(
-                    probability_list
+                VALUES
+                (?, ?, ?, ?, ?)
+                """,
+                (
+                    user_db_id,
+                    file.filename,
+                    disease,
+                    round(
+                        confidence * 100,
+                        2
+                    ),
+                    json.dumps(
+                        probability_list
+                    )
                 )
             )
-        )
 
-
-        connection.commit()
-
-
-        history_id = cursor.lastrowid
+            connection.commit()
+            history_id = cursor.lastrowid
+            connection.close()
+        except Exception as db_err:
+            print("Local history save skipped:", db_err)
 
         connection.close()
 
@@ -1502,8 +1541,9 @@ if __name__ == "__main__":
     print()
 
 
+    port = int(os.environ.get("PORT", 5000))
     app.run(
         host="0.0.0.0",
-        port=5000,
+        port=port,
         debug=False
     )

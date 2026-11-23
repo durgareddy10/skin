@@ -51,7 +51,7 @@ function About() {
             fontFamily:
               "Georgia, 'Times New Roman', serif",
             fontSize:
-              "clamp(45px, 6vw, 70px)",
+              "clamp(28px, 5.5vw, 64px)",
             lineHeight: "1.05",
             letterSpacing: "-2px",
             color: C.dark,

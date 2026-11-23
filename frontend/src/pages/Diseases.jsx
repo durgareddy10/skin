@@ -1,8 +1,9 @@
+import React from "react";
 import { Link } from "react-router-dom";
 
 const C = {
   bg: "#f7f4ee",
-  card: "#fbf9f5",
+  card: "#fffdfa",
   dark: "#29251f",
   brown: "#756c61",
   terracotta: "#b95731",
@@ -10,475 +11,289 @@ const C = {
   border: "#ded5c9",
 };
 
-
 const diseases = [
   {
     code: "AD",
     name: "Atopic Dermatitis",
     icon: "💧",
     description:
-      "A common inflammatory skin condition that can cause dry, itchy and irritated skin.",
+      "A chronic inflammatory condition causing dry, hypersensitive skin and intense itching cycles.",
     type: "Common",
+    dietHighlight: "Eat: Omega-3 Fatty Fish, Quercetin · Avoid: Dairy, Refined Sugar",
   },
-
   {
     code: "CD",
     name: "Contact Dermatitis",
     icon: "🔴",
     description:
-      "Skin inflammation that can occur when the skin comes into contact with an irritating or allergic substance.",
+      "Localized skin inflammation and blisters caused by direct exposure to irritants or allergens.",
     type: "Common",
+    dietHighlight: "Eat: Vitamin C, Turmeric, Ginger · Avoid: High-Nickel Foods, Wine",
   },
-
   {
     code: "EC",
     name: "Eczema",
     icon: "🌿",
     description:
-      "A group of conditions that may cause dry, itchy, inflamed or irritated skin.",
+      "A widespread group of inflammatory skin conditions characterized by dry, cracked, and red patches.",
     type: "Common",
+    dietHighlight: "Eat: Bone Broth, Blueberries, Seeds · Avoid: Cow's Milk, Trans Fats",
   },
-
   {
     code: "SC",
     name: "Scabies",
     icon: "🔬",
     description:
-      "A contagious skin condition associated with intense itching and a characteristic skin rash.",
+      "A contagious parasitic infestation by microscopic mites causing intense nocturnal itching.",
     type: "Contagious",
+    dietHighlight: "Eat: Garlic, Vitamin A, Zinc · Avoid: Sugar, Excess Alcohol, Fast Food",
   },
-
   {
     code: "SD",
     name: "Seborrheic Dermatitis",
     icon: "🫧",
     description:
-      "A skin condition that commonly affects areas with more oil-producing glands and may cause scaling.",
+      "Scaling and greasy redness on sebum-rich areas (scalp, face) driven by Malassezia yeast.",
     type: "Common",
+    dietHighlight: "Eat: Anti-Fungal Herbs, Coconut Oil · Avoid: Refined Carbs, Beer, Yeasty Foods",
   },
-
   {
     code: "TC",
     name: "Tinea Corporis",
     icon: "⭕",
     description:
-      "A fungal skin infection that can produce circular or ring-shaped skin lesions.",
+      "A contagious superficial fungal infection producing characteristic circular ring-shaped lesions.",
     type: "Contagious",
+    dietHighlight: "Eat: Raw Garlic, Leafy Greens · Avoid: Sugar, Bakery Yeast, Sweet Drinks",
   },
 ];
 
-
-function Diseases() {
-
+export default function Diseases() {
   return (
     <div
       style={{
         minHeight: "100vh",
-
         background: C.bg,
-
         color: C.dark,
-
-        fontFamily:
-          "Arial, Helvetica, sans-serif",
-
-        padding:
-          "75px 30px 90px",
+        fontFamily: "Georgia, 'Times New Roman', serif",
+        padding: "50px 20px 90px",
+        boxSizing: "border-box",
       }}
     >
-
-      {/* =========================================
-          PAGE HEADER
-      ========================================= */}
-
+      {/* HEADER SECTION */}
       <section
         style={{
-          maxWidth: "1100px",
-
+          maxWidth: "960px",
           margin: "0 auto",
-
           textAlign: "center",
-
-          paddingBottom: "55px",
+          paddingBottom: "50px",
         }}
       >
-
         <div
           style={{
             display: "inline-block",
-
-            padding:
-              "8px 14px",
-
+            padding: "8px 16px",
             borderRadius: "30px",
-
             background: C.light,
-
-            border:
-              `1px solid ${C.border}`,
-
+            border: `1px solid ${C.border}`,
             color: C.terracotta,
-
-            fontSize: "9px",
-
+            fontSize: "11px",
             fontWeight: "700",
-
-            letterSpacing: "1.2px",
+            letterSpacing: "2.5px",
+            marginBottom: "16px",
           }}
         >
-          SKIN CONDITIONS
+          DERMASCAN CLINICAL ATLAS
         </div>
-
 
         <h1
           style={{
-            marginTop: "18px",
-
-            fontFamily:
-              "Georgia, 'Times New Roman', serif",
-
-            fontSize:
-              "clamp(42px, 5vw, 64px)",
-
-            lineHeight: "1.05",
-
-            letterSpacing: "-2px",
-
+            margin: "0 0 16px",
+            fontSize: "clamp(34px, 5.5vw, 52px)",
+            lineHeight: "1.1",
             color: C.dark,
+            fontWeight: "700",
           }}
         >
-          Understand common
-          <br />
-
-          <span
-            style={{
-              color: C.terracotta,
-            }}
-          >
-            skin conditions.
-          </span>
+          Explore Skin Conditions &{" "}
+          <span style={{ color: C.terracotta }}>Dietary Guides</span>
         </h1>
-
 
         <p
           style={{
-            maxWidth: "650px",
-
-            margin:
-              "20px auto 0",
-
+            maxWidth: "680px",
+            margin: "0 auto",
             color: C.brown,
-
-            fontSize: "13px",
-
-            lineHeight: "1.8",
+            fontSize: "16px",
+            lineHeight: "1.7",
           }}
         >
-          Explore the six skin conditions supported
-          by the DermaScan classification model.
+          Learn the symptoms, triggers, precautions, and medically-recommended foods to eat and avoid for each of the six conditions classified by DermaScan.
         </p>
-
       </section>
 
-
-      {/* =========================================
-          DISEASE CARDS
-      ========================================= */}
-
+      {/* RESPONSIVE DISEASE CARDS GRID */}
       <section
         style={{
-          maxWidth: "1100px",
-
+          maxWidth: "1140px",
           margin: "0 auto",
-
           display: "grid",
-
-          gridTemplateColumns:
-            "repeat(3, 1fr)",
-
-          gap: "22px",
+          gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 280px), 1fr))",
+          gap: "20px",
         }}
       >
-
-        {diseases.map(
-          (disease) => (
-
-            <div
-              key={disease.code}
-
-              style={{
-                minHeight: "285px",
-
-                padding: "28px",
-
-                border:
-                  `1px solid ${C.border}`,
-
-                borderRadius: "18px",
-
-                background: C.card,
-
-                display: "flex",
-
-                flexDirection:
-                  "column",
-
-                justifyContent:
-                  "space-between",
-
-                transition:
-                  "transform 0.2s ease, box-shadow 0.2s ease",
-              }}
-            >
-
-              {/* CARD TOP */}
-
-              <div>
-
+        {diseases.map((disease) => (
+          <div
+            key={disease.code}
+            style={{
+              background: C.card,
+              border: `1px solid ${C.border}`,
+              borderRadius: "22px",
+              padding: "clamp(20px, 4vw, 32px)",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+              boxShadow: "0 8px 24px rgba(41, 37, 31, 0.04)",
+              transition: "transform 0.2s ease, box-shadow 0.2s ease",
+            }}
+          >
+            {/* TOP CARD CONTENT */}
+            <div>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  marginBottom: "20px",
+                }}
+              >
                 <div
                   style={{
+                    width: "56px",
+                    height: "56px",
                     display: "flex",
-
-                    alignItems:
-                      "center",
-
-                    justifyContent:
-                      "space-between",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    borderRadius: "15px",
+                    background: C.light,
+                    fontSize: "26px",
                   }}
                 >
+                  {disease.icon}
+                </div>
 
-                  {/* ICON */}
-
-                  <div
-                    style={{
-                      width: "52px",
-
-                      height: "52px",
-
-                      display: "flex",
-
-                      alignItems:
-                        "center",
-
-                      justifyContent:
-                        "center",
-
-                      borderRadius: "13px",
-
-                      background:
-                        C.light,
-
-                      fontSize: "23px",
-                    }}
-                  >
-                    {disease.icon}
-                  </div>
-
-
-                  {/* CODE */}
-
+                <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
                   <span
                     style={{
-                      color: "#9b9083",
-
-                      fontSize: "10px",
-
+                      background: "#f8ece8",
+                      color: C.terracotta,
+                      padding: "4px 10px",
+                      borderRadius: "12px",
+                      fontSize: "11px",
                       fontWeight: "700",
-
-                      letterSpacing:
-                        "1px",
+                      letterSpacing: "1px",
                     }}
                   >
                     {disease.code}
                   </span>
-
+                  <span
+                    style={{
+                      background: C.light,
+                      color: C.brown,
+                      padding: "4px 10px",
+                      borderRadius: "12px",
+                      fontSize: "11px",
+                      fontWeight: "600",
+                    }}
+                  >
+                    {disease.type}
+                  </span>
                 </div>
-
-
-                {/* NAME */}
-
-                <h2
-                  style={{
-                    marginTop: "28px",
-
-                    fontFamily:
-                      "Georgia, 'Times New Roman', serif",
-
-                    fontSize: "25px",
-
-                    lineHeight: "1.15",
-
-                    color: C.dark,
-                  }}
-                >
-                  {disease.name}
-                </h2>
-
-
-                {/* DESCRIPTION */}
-
-                <p
-                  style={{
-                    marginTop: "12px",
-
-                    color: C.brown,
-
-                    fontSize: "11px",
-
-                    lineHeight: "1.75",
-                  }}
-                >
-                  {disease.description}
-                </p>
-
               </div>
 
-
-              {/* CARD BOTTOM */}
-
-              <div
+              <h2
                 style={{
-                  display: "flex",
-
-                  alignItems:
-                    "center",
-
-                  justifyContent:
-                    "space-between",
-
-                  marginTop: "25px",
+                  margin: "0 0 10px",
+                  fontSize: "24px",
+                  color: C.dark,
+                  fontWeight: "700",
+                  lineHeight: "1.2",
                 }}
               >
+                {disease.name}
+              </h2>
 
-                {/* TYPE */}
+              <p
+                style={{
+                  margin: "0 0 18px",
+                  color: C.brown,
+                  fontSize: "14.5px",
+                  lineHeight: "1.65",
+                }}
+              >
+                {disease.description}
+              </p>
 
-                <span
+              {/* DIET PREVIEW PILL */}
+              <div
+                style={{
+                  background: "#f4fbf5",
+                  border: "1px solid #c8eccf",
+                  borderRadius: "12px",
+                  padding: "12px 14px",
+                  marginBottom: "22px",
+                }}
+              >
+                <div
                   style={{
-                    color:
-                      C.terracotta,
-
-                    fontSize: "9px",
-
+                    fontSize: "11px",
                     fontWeight: "700",
-
-                    letterSpacing:
-                      "0.5px",
+                    letterSpacing: "1px",
+                    color: "#1c5d29",
+                    marginBottom: "4px",
                   }}
                 >
-                  {disease.type}
-                </span>
-
-
-                {/* ARROW */}
-
-                <Link
-                  to={`/diseases/${disease.code}`}
-
+                  🥗 DIET & NUTRITION GUIDE
+                </div>
+                <div
                   style={{
-                    width: "38px",
-
-                    height: "38px",
-
-                    display: "flex",
-
-                    alignItems:
-                      "center",
-
-                    justifyContent:
-                      "center",
-
-                    borderRadius:
-                      "50%",
-
-                    background:
-                      C.dark,
-
-                    color: "#fff",
-
-                    textDecoration:
-                      "none",
-
-                    fontSize: "17px",
-
-                    transition:
-                      "0.2s",
+                    fontSize: "13px",
+                    color: "#286b36",
+                    lineHeight: "1.5",
                   }}
                 >
-                  →
-                </Link>
-
+                  {disease.dietHighlight}
+                </div>
               </div>
-
             </div>
 
-          )
-        )}
-
+            {/* CARD BOTTOM ACTION */}
+            <div>
+              <Link
+                to={`/diseases/${disease.code}`}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "8px",
+                  width: "100%",
+                  padding: "13px",
+                  background: C.dark,
+                  color: "#ffffff",
+                  textDecoration: "none",
+                  borderRadius: "12px",
+                  fontSize: "14px",
+                  fontWeight: "700",
+                  boxSizing: "border-box",
+                  transition: "background 0.2s",
+                }}
+              >
+                View Symptoms & Full Diet Guide →
+              </Link>
+            </div>
+          </div>
+        ))}
       </section>
-
-
-      {/* =========================================
-          INFORMATION BOX
-      ========================================= */}
-
-      <section
-        style={{
-          maxWidth: "1100px",
-
-          margin:
-            "35px auto 0",
-
-          padding: "20px 24px",
-
-          borderRadius: "12px",
-
-          background: C.light,
-
-          border:
-            `1px solid ${C.border}`,
-
-          display: "flex",
-
-          alignItems: "flex-start",
-
-          gap: "12px",
-        }}
-      >
-
-        <span
-          style={{
-            color: C.terracotta,
-
-            fontSize: "15px",
-          }}
-        >
-          ⓘ
-        </span>
-
-
-        <p
-          style={{
-            margin: 0,
-
-            color: C.brown,
-
-            fontSize: "10px",
-
-            lineHeight: "1.7",
-          }}
-        >
-          These are the six skin-condition classes
-          currently supported by the DermaScan trained
-          classification model. Select a disease card
-          to learn more about its characteristics,
-          causes and general precautions.
-        </p>
-
-      </section>
-
     </div>
   );
 }
-
-
-export default Diseases;

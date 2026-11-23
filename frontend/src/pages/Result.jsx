@@ -10,6 +10,15 @@ const CLASS_NAMES = [
   "Tinea Corporis (TC)",
 ];
 
+const diseaseCodeMap = {
+  "Atopic Dermatitis (AD)": "AD",
+  "Contact Dermatitis (CD)": "CD",
+  "Eczema (EC)": "EC",
+  "Scabies (SC)": "SC",
+  "Seborrheic Dermatitis (SD)": "SD",
+  "Tinea Corporis (TC)": "TC",
+};
+
 /*
 |--------------------------------------------------------------------------
 | Disease information
@@ -545,6 +554,88 @@ export default function Result() {
             image. It is not a medical diagnosis.
             A healthcare professional should make
             the final diagnosis.
+          </div>
+        </section>
+
+        {/* -----------------------------------
+            DIET & NUTRITION BANNER
+            ----------------------------------- */}
+        <section
+          style={{
+            background: "#f4fbf5",
+            border: "1px solid #c2e8c9",
+            borderRadius: "20px",
+            padding: "26px 30px",
+            marginBottom: "30px",
+            boxShadow: "0 6px 20px rgba(28, 93, 41, 0.05)",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              flexWrap: "wrap",
+              gap: "16px",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+              <span style={{ fontSize: "36px" }}>🥗</span>
+              <div>
+                <div
+                  style={{
+                    fontSize: "11px",
+                    fontWeight: "700",
+                    color: "#1c5d29",
+                    letterSpacing: "1.5px",
+                    marginBottom: "4px",
+                  }}
+                >
+                  CLINICAL NUTRITION & HEALING DIET
+                </div>
+                <h3
+                  style={{
+                    margin: "0 0 5px",
+                    fontSize: "20px",
+                    color: "#1c5d29",
+                    fontWeight: "700",
+                  }}
+                >
+                  Recommended Diet & Foods to Avoid for {info.shortName}
+                </h3>
+                <p
+                  style={{
+                    margin: 0,
+                    color: "#2d753b",
+                    fontSize: "14px",
+                    lineHeight: "1.5",
+                  }}
+                >
+                  Discover the anti-inflammatory foods that heal this condition and the trigger items to eliminate.
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={() =>
+                navigate(
+                  `/diseases/${diseaseCodeMap[disease] || "EC"}`
+                )
+              }
+              style={{
+                background: "#1c5d29",
+                color: "#ffffff",
+                border: "none",
+                padding: "13px 24px",
+                borderRadius: "11px",
+                fontSize: "14px",
+                fontWeight: "700",
+                cursor: "pointer",
+                boxShadow: "0 4px 12px rgba(28, 93, 41, 0.2)",
+              }}
+            >
+              View Diet Guide →
+            </button>
           </div>
         </section>
 

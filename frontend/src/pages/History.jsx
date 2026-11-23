@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "../lib/supabase";
 
 function getCurrentUser() {
   const possibleKeys = [
@@ -229,13 +230,49 @@ export default function History() {
     };
   }, []);
 
-  const loadHistory = () => {
+  const loadHistory = async () => {
     setLoading(true);
 
-    const currentUser =
-      getCurrentUser();
+    const { data: { session } } = await supabase.auth.getSession();
+    const currentUser = session?.user
+      ? {
+          name:
+            session.user.user_metadata?.name ||
+            session.user.email.split("@")[0],
+          email: session.user.email,
+        }
+      : getCurrentUser();
 
     setUser(currentUser);
+
+    // Try fetching from Supabase history table
+    if (session?.user) {
+      try {
+        const { data, error } = await supabase
+          .from("history")
+          .select("*")
+          .order("created_at", { ascending: false });
+
+        if (data && data.length > 0) {
+          setHistory(
+            data.map((item) => ({
+              id: item.id,
+              disease: item.disease,
+              confidence: Number(item.confidence || 0),
+              probabilities: item.probabilities || [],
+              image: item.image_url,
+              filename: item.filename,
+              date: item.created_at,
+              user: currentUser,
+            }))
+          );
+          setLoading(false);
+          return;
+        }
+      } catch (err) {
+        console.warn("Could not load from Supabase history:", err);
+      }
+    }
 
     const savedHistory =
       readHistory(currentUser);
@@ -351,16 +388,16 @@ export default function History() {
     },
 
     title: {
-      fontSize: "58px",
-      lineHeight: "1.05",
-      margin: "0 0 18px",
+      fontSize: "clamp(30px, 6vw, 54px)",
+      lineHeight: "1.08",
+      margin: "0 0 14px",
       color: "#29251f",
     },
 
     subtitle: {
-      fontSize: "18px",
+      fontSize: "16px",
       color: "#625a51",
-      marginBottom: "45px",
+      marginBottom: "32px",
     },
 
     card: {
@@ -368,7 +405,7 @@ export default function History() {
       border:
         "1px solid #ded5c8",
       borderRadius: "22px",
-      padding: "40px",
+      padding: "clamp(18px, 4vw, 36px)",
       marginBottom: "25px",
     },
 

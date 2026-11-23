@@ -38,3 +38,7 @@ Thumbs.db
 
 # Application database
 backend/dermascan.db
+
+# Agent files
+.agents/
+skills-lock.json
