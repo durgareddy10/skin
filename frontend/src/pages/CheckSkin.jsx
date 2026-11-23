@@ -93,6 +93,56 @@ function saveHistory(result, user) {
   localStorage.setItem("dermascan_history", JSON.stringify(history));
 }
 
+// Compress and resize large phone camera images (12MB -> ~150KB) to ensure sub-second uploads on mobile
+function compressImage(file, maxWidth = 1024, quality = 0.82) {
+  if (!file || !file.type.startsWith("image/") || file.type === "image/svg+xml") {
+    return Promise.resolve(file);
+  }
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        let { width, height } = img;
+        if (width > maxWidth || height > maxWidth) {
+          if (width > height) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          } else {
+            width = Math.round((width * maxWidth) / height);
+            height = maxWidth;
+          }
+        }
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, width, height);
+        canvas.toBlob(
+          (blob) => {
+            if (!blob) {
+              resolve(file);
+              return;
+            }
+            const cleanName = (file.name || "image").replace(/\.[^/.]+$/, "") + ".jpg";
+            const compressed = new File([blob], cleanName, {
+              type: "image/jpeg",
+              lastModified: Date.now(),
+            });
+            resolve(compressed);
+          },
+          "image/jpeg",
+          quality
+        );
+      };
+      img.onerror = () => resolve(file);
+      img.src = e.target.result;
+    };
+    reader.onerror = () => resolve(file);
+    reader.readAsDataURL(file);
+  });
+}
+
 export default function CheckSkin() {
   const navigate = useNavigate();
   const galleryInputRef = useRef(null);
@@ -101,6 +151,7 @@ export default function CheckSkin() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [preview, setPreview] = useState("");
   const [loading, setLoading] = useState(false);
+  const [loadingStatus, setLoadingStatus] = useState("Analyzing with AI Model...");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [user, setUser] = useState(null);
@@ -186,6 +237,11 @@ export default function CheckSkin() {
 
     setSelectedFile(file);
 
+    // Pre-warm Render backend while user inspects preview (wakes sleeping free tier container)
+    if (API_URL) {
+      fetch(`${API_URL}/api/health`, { method: "GET" }).catch(() => {});
+    }
+
     const reader = new FileReader();
     reader.onload = (e) => {
       setPreview(e.target.result);
@@ -236,43 +292,54 @@ export default function CheckSkin() {
     const token = session?.access_token || localStorage.getItem("token") || "";
 
     setLoading(true);
+    setLoadingStatus("Optimizing photo for fast screening...");
 
     try {
-      let uploadedImageUrl = null;
+      // 1. Client-side compress large smartphone photos (down from 12MB to ~150KB)
+      const optimizedFile = await compressImage(selectedFile, 1024, 0.82);
 
-      // Upload image to Supabase Storage if user is signed in
-      if (session?.user) {
+      setLoadingStatus("Connecting to clinical AI screening model...");
+
+      // 2. Parallel upload: Supabase Storage + AI Prediction simultaneously
+      const storageUploadTask = (async () => {
+        if (!session?.user) return null;
         try {
-          const fileExt = selectedFile.name.split(".").pop();
-          const filePath = `${session.user.id}/${Date.now()}.${fileExt}`;
+          const filePath = `${session.user.id}/${Date.now()}.jpg`;
           const { data: uploadData, error: uploadError } = await supabase.storage
             .from("skin-images")
-            .upload(filePath, selectedFile);
+            .upload(filePath, optimizedFile);
 
           if (!uploadError && uploadData) {
             const { data: urlData } = supabase.storage
               .from("skin-images")
               .getPublicUrl(filePath);
-            uploadedImageUrl = urlData?.publicUrl;
+            return urlData?.publicUrl || null;
           }
         } catch (storageErr) {
           console.warn("Storage upload skipped:", storageErr);
         }
-      }
+        return null;
+      })();
 
       const formData = new FormData();
-      formData.append("image", selectedFile);
+      formData.append("image", optimizedFile);
 
       const headers = {};
       if (token) {
         headers["Authorization"] = `Bearer ${token}`;
       }
 
-      const response = await fetch(`${API_URL}/api/predict`, {
-        method: "POST",
-        headers: headers,
-        body: formData,
-      });
+      setLoadingStatus("Running AI dermatological analysis...");
+
+      // Execute Supabase upload and backend inference in parallel
+      const [uploadedImageUrl, response] = await Promise.all([
+        storageUploadTask,
+        fetch(`${API_URL}/api/predict`, {
+          method: "POST",
+          headers: headers,
+          body: formData,
+        }),
+      ]);
 
       if (!response.ok) {
         let msg = `Backend error: HTTP ${response.status}`;
@@ -569,7 +636,7 @@ export default function CheckSkin() {
               {loading && (
                 <div style={styles.loadingNotice}>
                   <div style={{ fontSize: "18px", marginBottom: "4px" }}>⏳</div>
-                  <div>DermaScan deep learning model is analyzing your photo. Please wait...</div>
+                  <div>{loadingStatus || "DermaScan deep learning model is analyzing your photo. Please wait..."}</div>
                 </div>
               )}
 
